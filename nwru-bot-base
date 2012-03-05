@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+#coding=utf8
+import getopt
+import sys
+from waperagent import *
+import time
+import re
+import random
+
+goptres = getopt.getopt(sys.argv[1:], 'u:p:');
+user = '';
+passwd = '';
+
+for opt, arg in goptres[0]:
+	if opt in ('-u', ):
+		user = arg;
+	elif opt in ('-p', ):
+		passwd = arg;
+
+wa = WaperAgent();
+wa.init();
+
+def randreply(*args):
+	return args[random.randint(0, len(args)-1)];
+
+def proccess_msg(pid, author, text):
+	text = text.strip();
+	regex = re.compile(r'(<b>.*?</b>, )?(.*)');
+	text2 = regex.findall(text)[0];
+	text2 = text2[len(text2)-1];
+	if re.findall('!(ping|пинг)', text2): return 'PONG!';
+	elif re.findall('!(me|ме)', text2): return author;
+	elif re.findall(u'(клоун|дырчик|гмс|нареза)', unicode(text2, 'utf-8').lower(), re.IGNORECASE): return randreply('Иди нах атцедава, дырчик дырявый задреприводный гмсный с нарезаной резьбой:e', 'скорее ты пидор, чем я:e');
+	elif re.findall(u'(фапаеш)', unicode(text2, 'utf-8').lower(), re.IGNORECASE): return randreply('Да, фапаю.... Мнум жеж страпон:hack:', 'А ты как будто не фапаешь......');
+	elif re.findall(u'(привет|:hello:)', unicode(text2, 'utf-8').lower(), re.IGNORECASE): return randreply(':hello:', 'здравствуй мой юный друг:hello:');
+	elif re.findall(u'(пичаль|:sad:)', unicode(text2, 'utf-8').lower(), re.IGNORECASE): return randreply(':sad:',  '8(');
+	else: return 'Invalid command. Мнум понимает команды !ping, !me, слова "привет, гмс, дырчик, нарезать, фапаешь, пичальки" ;/';
+
+try:
+	wa.auth(user, passwd);
+	sys.stderr.write('Auth ok\n');
+except WaperAgentCannotAuth:
+	sys.stderr.write('Cannot auth\n');
+	sys.exit(1);
+
+while 1:
+	post = None;
+	try: post = wa.getnewmsg();
+	except: pass
+	if post!=None:
+		ret = proccess_msg(int(post[0]), post[1], post[2].strip());
+		print 'Received msg from '+post[1]+': "'+post[2].strip()+'"';
+		print 'Reply is "'+ret+'"'
+		wa.answer_in_forum(int(post[0]), '[b]'+post[1]+'[/b], '+ret);
+	else: print "No new mesages;/";
+ 	time.sleep(15);
