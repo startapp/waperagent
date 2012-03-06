@@ -121,8 +121,19 @@ class WaperAgent(Curl):
 		regex = re.compile(r'<div class="r.h"+>.*?<a name="([0-9]+)">.*?<a href="\/user\/[0-9]+">(.*?)<\/a>.*?<div>(.*?)<\/div>', re.DOTALL);
 		post = regex.findall(res)[0];
 		return post;
+	def user_find(self, login):
+		try:
+			return int(login);
+		except:
+			res = self.get('http://waper.ru/user/search?ageFrom=&ageTo=&sex=0&lo=0&sort=0', {'login':login, 'ageFrom':'0', 'ageTo':'0', 'sex':'0', 'lo':'0', 'sort':'0'});
+			print res;
+			regex = re.compile(r'<a href="/user/([0-9]+)">'+login+'</a>', re.DOTALL);
+			rr = regex.findall(res);
+			print rr;
+			return rr[0];
 	def send_privmsg(self, to, text):
-		res = self.post('http://waper.ru/office/talk/outbox/say.php?id='+str(to)+'&amp;r=0&amp;mid=0', {'_h':'!', '_h':'ю', 'text':text, 'send':'Отправить'});
+		uid = self.user_find(to);
+		res = self.post('http://waper.ru/office/talk/outbox/say.php?id='+str(uid)+'&amp;r=0&amp;mid=0', {'_h':'!', '_h':'ю', 'text':text, 'send':'Отправить'});
 	def recv_privmsg(self):
 		res = self.get('http://waper.ru/office/talk/inbox/');
 		regex = re.compile(r'<div class="msgh"><small class="info">(.*?)</small>, <a href="/user/(.*?)">(.*?)</a>.*?<div class="body">(.*?)<br/><small>.*?</div>', re.DOTALL);
@@ -131,11 +142,11 @@ class WaperAgent(Curl):
 		msgobjs = [];
 		for m in msgs:
 			msgobjs.append(ReceivedMessage(*m));
-		if len(msgobjs)==0: return None;
 		return msgobjs;
 
 	def read_friends(self, uid=0):
 		if uid==0: uid=self.uid;
+		uid = self.user_find(uid);
 		res = self.get('http://waper.ru/user/friend/?id='+str(uid));
 		regex = re.compile(r'<a href="/user/([0-9]+)">(.*?)</a>\[<a.*?>x</a>\]<br/>', re.DOTALL);
 		friends = regex.findall(res);
