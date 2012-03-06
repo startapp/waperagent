@@ -48,6 +48,8 @@ function uninstallation {
 	removefile /usr/bin/nwru-answer-on-all-negativepc-topics
 	removefile /usr/bin/nwru-create-topic
 	removefile /usr/bin/nwru-last-users
+	removefile /usr/bin/nwru-recv-msgs
+	removefile /usr/bin/nwru-send-msg
 	removefile /etc/waperagent_conf.py
 	removefile /usr/lib/python${PYVER}/waperagent.py
 	echo "Waperagent has been successfully uninstalled!"
