@@ -83,14 +83,25 @@ class WaperAgent(Curl):
 			raise WaperAgentCannotSendPost;
 		if num != 0: print 'Topic #'+str(num)+' sent';
 	def count_pages(self, page):
-		res = self.get('http://waper.ru/'+str(page));
+		res = self.get(page);
 		regex = re.compile(r'page=([0-9]+)">[0-9]+</a>(?:</div>|<br/>)', re.DOTALL);
 		rr = regex.findall(res);
 		#print rr;
 		if(len(rr)==0): return 1;
-		return rr[0];
+		return int(rr[0]);
+	def get_full(self, url, mode='&', args={}):
+		cp = self.count_pages(url);
+		res = '';
+		for i in xrange(1, cp+1):
+			if mode==0:
+				args.update({'page':str(i)});
+				res += self.get(url, args);
+			else:
+				res += self.get(url+mode+'page='+str(i), args);
+		#print res;
+		return res;
 	def get_all_topics_ids(self, forumid):
-		res = self.get('http://waper.ru/forum/'+str(forumid));
+		res = self.get_full('http://waper.ru/forum/'+str(forumid));
 		regex = re.compile(r'<a href="/forum/topic/([0-9]+)">(.+)</a>.*\[(.+)\] (.+)<a href="/forum/post/([0-9]+)">');
 		rr = regex.findall(res);
 		if(len(rr)==0): return 1;
@@ -126,16 +137,19 @@ class WaperAgent(Curl):
 			return int(login);
 		except:
 			res = self.get('http://waper.ru/user/search?ageFrom=&ageTo=&sex=0&lo=0&sort=0', {'login':login, 'ageFrom':'0', 'ageTo':'0', 'sex':'0', 'lo':'0', 'sort':'0'});
-			print res;
+			#print res;
 			regex = re.compile(r'<a href="/user/([0-9]+)">'+login+'</a>', re.DOTALL);
 			rr = regex.findall(res);
-			print rr;
+			#print rr;
 			return rr[0];
 	def send_privmsg(self, to, text):
 		uid = self.user_find(to);
 		res = self.post('http://waper.ru/office/talk/outbox/say.php?id='+str(uid)+'&amp;r=0&amp;mid=0', {'_h':'!', '_h':'ю', 'text':text, 'send':'Отправить'});
-	def recv_privmsg(self):
-		res = self.get('http://waper.ru/office/talk/inbox/');
+	def recv_privmsg(self, full=0):
+		if full:
+			res = self.get_full('http://waper.ru/office/talk/inbox/');
+		else:
+			res = self.get('http://waper.ru/office/talk/inbox/');
 		regex = re.compile(r'<div class="msgh"><small class="info">(.*?)</small>, <a href="/user/(.*?)">(.*?)</a>.*?<div class="body">(.*?)<br/><small>.*?</div>', re.DOTALL);
 		msgs = regex.findall(res);
 		msgs.reverse();
@@ -147,8 +161,8 @@ class WaperAgent(Curl):
 	def read_friends(self, uid=0):
 		if uid==0: uid=self.uid;
 		uid = self.user_find(uid);
-		res = self.get('http://waper.ru/user/friend/?id='+str(uid));
-		regex = re.compile(r'<a href="/user/([0-9]+)">(.*?)</a>\[<a.*?>x</a>\]<br/>', re.DOTALL);
+		res = self.get_full('http://waper.ru/user/friend/?id='+str(uid));
+		regex = re.compile(r'<a href="/user/([0-9]+)">(.*?)</a><br/>', re.DOTALL);
 		friends = regex.findall(res);
 		userobjs = [];
 		for f in friends:
