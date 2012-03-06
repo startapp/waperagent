@@ -1,0 +1,91 @@
+#!/usr/bin/env python
+#coding=utf8
+import getopt
+import sys
+from waperagent import *
+from threading import *
+import urwid
+
+wa = WaperAgent();
+wa.init();
+
+goptres = getopt.getopt(sys.argv[1:], 'u:p:t:');
+user = '';
+passwd = '';
+active_talk = '';
+
+for opt, arg in goptres[0]:
+	if opt in ('-u', ):
+		user = arg;
+	elif opt in ('-p', ):
+		passwd = arg;
+	elif opt in ('-t', ):
+		active_talk = arg;
+
+try:
+	wa.auth(user, passwd);
+	sys.stdout.write('Auth ok\n');
+except WaperAgentCannotAuth:
+	sys.stderr.write('Cannot auth\n');
+	sys.exit(1);
+
+class ReceiverThread(Thread):
+	def __init__(self):
+		Thread.__init__(self);
+		self.running = 1;
+		self.lock = Lock();
+	def run(self):
+		global wa
+		while True:
+			if not rt.running: continue;
+			self.lock.acquire();
+			msgs = wa.recv_privmsg();
+			self.lock.release();
+			for m in msgs:
+				update_talk(m.from_login.decode('utf-8'), m.from_login+'> '+m.text.decode('utf-8'));
+
+def update_talk(talk, txt):
+	global talks, active_talk, vtxt1;
+	talks[talk] += txt+'\n';
+	if talk == active_talk:
+		vtxt1.set_text(talks[talk]);
+
+def set_talk(talk):
+	global talks, vtxt1, active_talk;
+	if not talks.has_key(talk):
+		talks[talk] = u'';
+	active_talk = talk;
+	vtxt1.set_text(talks[talk]);
+
+def send_msg(talk, text):
+	global wa, user, rt;
+	rt.running = 0;
+	rt.lock.acquire();
+	wa.send_privmsg(talk, text.encode('utf-8'));
+	rt.lock.release();
+	rt.running = 1;
+	update_talk(talk, 'You> '+text);
+
+talks = {};
+
+def keypress(input):
+	global active_talk, vtxt2;
+	if input == 'ctrl q':
+		raise urwid.ExitMainLoop()
+	elif input == 'enter':
+		send_msg(active_talk, vtxt2.get_edit_text());
+		vtxt2.set_edit_text('');
+	else: print input;
+
+hdiv = urwid.Divider('-');
+txt = urwid.Text('Left bar.');
+vtxt1 = urwid.Text(u"");
+vtxt2 = urwid.Edit(u'');
+pile = urwid.Pile([('weight', '1', vtxt1), ('weight', '1', hdiv), ('weight', 2, vtxt2)]);
+cols = urwid.Columns([pile]);
+fill = urwid.Filler(cols);
+loop = urwid.MainLoop(fill, unhandled_input=keypress);
+set_talk(active_talk);
+rt = ReceiverThread();
+rt.start();
+loop.run();

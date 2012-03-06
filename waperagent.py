@@ -38,6 +38,13 @@ class WaperAgentCannotSendPost(Exception):
 	pass;
 
 class WaperAgent(Curl):
+	def ask_captcha(self, pg):
+		cimg = re.findall(r'/login/captcha_[0-9]+\.jpg', pg)[0];
+		f = open('cimg.jpg', 'w');
+		f.write(self.get('http://waper.ru'+cimg));
+		f.close();
+		os.popen(self.config.graphic_viewer_cmd%'cimg.jpg' + ' &');
+		return raw_input('CAPTCHA> ');
 	def init(self):
 		sys.path += [os.path.expanduser('~/'), '/etc'];
 		self.config = __import__('waperagent_conf');
@@ -45,14 +52,17 @@ class WaperAgent(Curl):
 			self.config.init(self);
 		except:
 			pass
-	def auth(self, login='', passwd=''):
+	def auth(self, login='', passwd='', captcha=''):
 		if login == '' or passwd == '':
 			login = self.config.default_login;
 			passwd = self.config.default_password;
-		res = self.post("http://waper.ru/login/", {'u_login': login, 'u_passwd': passwd});
+		if captcha=='':
+			res = self.post("http://waper.ru/login/", {'u_login': login, 'u_passwd': passwd});
+		else:
+			res = self.post("http://waper.ru/login/", {'u_login': login, 'u_passwd': passwd, 'u_code': captcha});			
 		if res.find('ошибка')!=1 and res.find('ошибки')!=-1:
-			sys.stderr.write('ERROR!\n\n\n'+str(res));
-			raise WaperAgentCannotAuth;
+			#sys.stderr.write('ERROR!\n\n\n'+str(res));
+			return self.auth(login, passwd, self.ask_captcha(res));
 		rr = re.compile(r'<a href="/user/([0-9]+)">Моя анкета</a>', re.DOTALL);
 		fnd = rr.findall(res);
 		#print fnd;

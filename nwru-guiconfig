@@ -25,6 +25,7 @@ items = [
 	'default_login',
 	'default_password',
 	'notifies_cmd',
+	'graphic_viewer_cmd',
 	'notifies_browser_open',
 	'refresh_time',
 	'exclude_topics'
@@ -32,7 +33,8 @@ items = [
 titles = [
 	'Логин',
 	'Пароль',
-	'Каманда, выполняемая при поступлении нового сообщения (неисп.)',
+	'Команда нотификации (неисп.)',
+	'Графический вьювер',
 	'Команда открытия браузера',
 	'Время обновления (сек.)',
 	'Исключить темы (для nwru-answer-on-all-topics)'
