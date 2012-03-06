@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+#coding=utf8
+import getopt
+import sys
+from waperagent import *
+import time
+
+wa = WaperAgent();
+wa.init();
+
+goptres = getopt.getopt(sys.argv[1:], 'u:p:t:c:');
+user = '';
+passwd = '';
+to = '';
+content = '';
+
+for opt, arg in goptres[0]:
+	if opt in ('-u', ):
+		user = arg;
+	elif opt in ('-p', ):
+		passwd = arg;
+	elif opt in ('-t', ):
+		to = arg;
+	elif opt in ('-c', ):
+		content = arg;
+
+try:
+	wa.auth(user, passwd);
+	sys.stdout.write('Auth ok\n');
+except WaperAgentCannotAuth:
+	sys.stderr.write('Cannot auth\n');
+	sys.exit(1);
+
+wa.send_privmsg(to, content);
