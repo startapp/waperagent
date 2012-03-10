@@ -43,7 +43,7 @@ def _thread(topicid, text, i):
 	wa.post_to_forum(topicid, text, i);
 
 def multithread():
-	global wa, user, passwd;
+	global wa, user, passwd, text;
 	while 1:
 		text += ' ';
 		i += 1;
@@ -51,7 +51,7 @@ def multithread():
 		time.sleep(1);
 
 def normal():
-	global wa;
+	global wa, text;
 	while 1:
 		text += ' ';
 		i += 1;
