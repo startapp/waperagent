@@ -77,6 +77,7 @@ function installation {
 	copyfile /usr/bin/nwru-recv-msgs
 	copyfile /usr/bin/nwru-read-friendlist
 	copyfile /usr/bin/nwru-messager
+    copyfile /usr/bin/nwru-notifyone
 	copyfile /usr/lib/python${PYVER}/waperagent.py
 	copyfile /etc/waperagent_conf.py
 	chmod a+r /etc/waperagent_conf.py
