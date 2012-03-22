@@ -99,7 +99,7 @@ class Notifier:
 	def add(self, newitem):
 		self.data += [newitem];
 	def getstring(self):
-		' и '.join(self.data);
+		return ' и '.join(self.data);
 
 def __check(tmp, regex, notifierObject):
 	_regex = re.compile(regex);
@@ -120,7 +120,7 @@ def check(url):
 	tmp = wa.get('http://waper.ru/office/');
 	if _check(tmp, notifierObject):
 		ti.msg();
-		#os.popen(cmd % (notifierObject.getstring(), user) ).read();
+		os.popen(cmd % (notifierObject.getstring(), user) ).read();
 	else: ti.nomsg();
 	return 1;
 
