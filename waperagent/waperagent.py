@@ -111,8 +111,9 @@ class WaperAgent(Curl):
 		#print res;
 		return res;
 	def get_all_topics_ids(self, forumid):
-		res = self.get_full('http://waper.ru/forum/'+str(forumid));
-		regex = re.compile(r'<a href="/forum/topic/([0-9]+)">(.+)</a>.*\[(.+)\] (.+)<a href="/forum/post/([0-9]+)">');
+		res = self.get('http://waper.ru/forum/'+str(forumid));
+		print res;
+		regex = re.compile(r'<a href="/forum/topic/([0-9]+)">(.+)</a>');
 		rr = regex.findall(res);
 		if(len(rr)==0): return 1;
 		return rr;
@@ -178,3 +179,12 @@ class WaperAgent(Curl):
 		for f in friends:
 			userobjs.append(User(*f));
 		return userobjs;
+
+	def post_to_chat(self, chatid, text, num=0):
+		try: res = self.post('http://waper.ru/office/group/chat/say.php?id='+str(chatid)+'&uid=0', {'text': text});
+		except: return
+		if res.find('Ошибка')!=-1:
+			sys.stderr.write('ERROR!\n\n\n'+str(res));
+			raise WaperAgentCannotSendPost;
+		if num != 0: print 'Post #'+str(num)+' sent';
+	
