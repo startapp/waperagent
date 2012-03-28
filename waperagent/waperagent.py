@@ -76,7 +76,7 @@ class WaperAgent(Curl):
 		if num != 0: print 'Post #'+str(num)+' sent';
 	def answer_in_forum(self, pid, text, num=0):
 		res = self.get('http://waper.ru/r/p.r/?pid='+str(pid));
-		#print res;
+		print res;
 		if res.find('Ошибка')!=-1:
 			sys.stderr.write('ERROR!\n\n\n'+str(res));
 			raise WaperAgentCannotSendPost;
@@ -134,14 +134,17 @@ class WaperAgent(Curl):
 		return self._check(tmp);
 
 	def getnewmsg(self, *args):
-		self.getnewmsg_forum(*args);
+		return self.getnewmsg_forum(*args);
 	def getnewmsg_forum(self):
 		tmp = self.get('http://waper.ru/office/notify/');
+		print tmp;
 		regex = re.compile(r'/forum/post/[0-9]+');
 		url = 'http://waper.ru'+regex.findall(tmp)[0];
 		res = self.get(url);
-		regex = re.compile(r'<div class="r.h"+>.*?<a name="([0-9]+)">.*?<a href="\/user\/[0-9]+">(.*?)<\/a>.*?<div>(.*?)<\/div>', re.DOTALL);
+		print res;
+		regex = re.compile(r'<div class="r.h"?">.*?<a name="(.*?)">.*?<a href="/user/.*?">(.*?)</a>.*?<div>(.*?)</div>', re.DOTALL);
 		post = regex.findall(res)[0];
+		print post;
 		return post;
 	def user_find(self, login):
 		try:

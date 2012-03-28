@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+#coding=utf8
+import getopt
+import sys
+from waperagent import *
+import time
+import re
+import random
+
+goptres = getopt.getopt(sys.argv[1:], 'u:p:f:');
+user = '';
+passwd = '';
+mfiles = '';
+
+for opt, arg in goptres[0]:
+	if opt in ('-u', ):
+		user = arg;
+	elif opt in ('-p', ):
+		passwd = arg;
+	elif opt in ('-f', ):
+		mfile = arg;
+
+cmd = 'mctxtgen-quiet-randfile %s'%mfile
+
+wa = WaperAgent();
+wa.init();
+
+def proccess_msg(pid, author, text):
+	global cmd
+	f = os.popen(cmd)
+	txt = f.read()
+	f.close()
+	return txt
+
+try:
+	wa.auth(user, passwd);
+	sys.stderr.write('Auth ok\n');
+except WaperAgentCannotAuth:
+	sys.stderr.write('Cannot auth\n');
+	sys.exit(1);
+
+while 1:
+	post = None;
+	try: post = wa.getnewmsg();
+	except: pass
+	if post!=None:
+		ret = proccess_msg(int(post[0]), post[1], post[2].strip());
+		print 'Received msg from '+post[1]+': "'+post[2].strip()+'"';
+		print 'Reply is "'+ret+'"'
+		wa.answer_in_forum(int(post[0]), '[b]'+post[1]+'[/b], '+ret);
+	else: print "No new mesages;/";
+ 	time.sleep(15);
