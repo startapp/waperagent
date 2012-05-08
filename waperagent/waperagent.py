@@ -99,6 +99,11 @@ class WaperAgent(Curl):
 		#print rr;
 		if(len(rr)==0): return 1;
 		return int(rr[0]);
+	def get_online_users(self):
+		res = self.get_full('http://waper.ru/user/online', mode='?');
+		regex = re.compile(r'/user/([0-9]+)');
+		return regex.findall(res);
+
 	def get_full(self, url, mode='&', args={}):
 		cp = self.count_pages(url);
 		res = '';
