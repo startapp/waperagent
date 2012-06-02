@@ -18,31 +18,31 @@ users = {'Ns3230':['Как там кастрюльки дьюара с замо�
 
 
 for opt, arg in goptres[0]:
-	if opt in ('-u', ):
-		user = arg;
-	elif opt in ('-p', ):
-		passwd = arg;
-	elif opt in ('-i', ):
-		forumid = int(arg);
-	elif opt in ('-x'):
-		exclude += [int(arg)];
+    if opt in ('-u', ):
+        user = arg;
+    elif opt in ('-p', ):
+        passwd = arg;
+    elif opt in ('-i', ):
+        forumid = int(arg);
+    elif opt in ('-x'):
+        exclude += [int(arg)];
 
 try:
-	wa.auth(user, passwd);
-	sys.stdout.write('Auth ok\n');
+    wa.auth(user, passwd);
+    sys.stdout.write('Auth ok\n');
 except WaperAgentCannotAuth:
-	sys.stderr.write('Cannot auth\n');
-	sys.exit(1);
+    sys.stderr.write('Cannot auth\n');
+    sys.exit(1);
 
 print 'Getting topic list...';
 tids = wa.get_all_topics_ids(forumid);
 for i in tids:
-	if int(i[0]) in exclude:
-		print 'Skipping topic "'+i[1]+'"...';
-		continue;
-	if not i[3] in users.keys():
-		print 'Skipping topic "'+i[1]+'"...';
-		continue;
-	text = users[i[3]][random.randint(0, len(users[i[3]])-1)];
-	print 'Posting to "'+i[1]+'" text "'+i[3]+', '+text+'"...';
-	wa.answer_in_forum(int(i[4]), i[3]+', '+text);
+    if int(i[0]) in exclude:
+        print 'Skipping topic "'+i[1]+'"...';
+        continue;
+    if not i[3] in users.keys():
+        print 'Skipping topic "'+i[1]+'"...';
+        continue;
+    text = users[i[3]][random.randint(0, len(users[i[3]])-1)];
+    print 'Posting to "'+i[1]+'" text "'+i[3]+', '+text+'"...';
+    wa.answer_in_forum(int(i[4]), i[3]+', '+text);

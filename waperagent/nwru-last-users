@@ -16,25 +16,25 @@ forumid = 0;
 
 
 for opt, arg in goptres[0]:
-	if opt in ('-u', ):
-		user = arg;
-	elif opt in ('-p', ):
-		passwd = arg;
-	elif opt in ('-i', ):
-		forumid = int(arg);
+    if opt in ('-u', ):
+        user = arg;
+    elif opt in ('-p', ):
+        passwd = arg;
+    elif opt in ('-i', ):
+        forumid = int(arg);
 
 try:
-	wa.auth(user, passwd);
-	sys.stdout.write('Auth ok\n');
+    wa.auth(user, passwd);
+    sys.stdout.write('Auth ok\n');
 except WaperAgentCannotAuth:
-	sys.stderr.write('Cannot auth\n');
-	sys.exit(1);
+    sys.stderr.write('Cannot auth\n');
+    sys.exit(1);
 
 print 'Getting topic list...';
 tids = wa.get_all_topics_ids(forumid);
 
 users = [];
 for i in tids:
-	if i[3] in users: continue
-	print i[3];
-	users += i[3];
+    if i[3] in users: continue
+    print i[3];
+    users += i[3];

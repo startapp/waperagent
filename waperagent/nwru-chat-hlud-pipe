@@ -6,11 +6,12 @@ from waperagent import *
 import time
 import threading
 
-goptres = getopt.getopt(sys.argv[1:], 'u:p:i:t:m');
+goptres = getopt.getopt(sys.argv[1:], 'u:p:i:t:m:c:');
 user = '';
 passwd = '';
-topicid = 0;
-text = ';/';
+chatid = 0;
+cmd = 'uname -a';
+append = ''
 multi = 0;
 
 
@@ -20,11 +21,14 @@ for opt, arg in goptres[0]:
     elif opt in ('-p', ):
         passwd = arg;
     elif opt in ('-i', ):
-        topicid = int(arg);
+        chatid = int(arg);
     elif opt in ('-t', ):
         text = arg;
     elif opt in ('-m'):
         multi = 1;
+    elif opt in ('-c'):
+        cmd = arg;
+
 
 wa = WaperAgent();
 wa.init();
@@ -37,28 +41,35 @@ except WaperAgentCannotAuth:
 
 i = 0;
 
-def _thread(topicid, text, i):
+def piperead():
+    global cmd
+    f = os.popen(cmd)
+    txt = f.read()
+    f.close()
+    return txt
+
+def _thread(chatid, text, i):
     global user, passwd, wa;
     wa.auth(user, pawwsd);
-    wa.post_to_forum(topicid, text, i);
+    wa.post_to_chat(chatid, text, i);
 
 def multithread():
-    global wa, user, passwd, text;
+    global wa, user, passwd, append;
     i = 1;
     while 1:
-        text += ' ';
+        append += ' ';
         i += 1;
-        thread._start_new_thread(_thread, (topicid, text, i));
+        thread._start_new_thread(_thread, (chatid, piperead()+append, i));
         time.sleep(1);
 
 def normal():
-    global wa, text;
+    global wa, append;
     i = 1
     while 1:
-        text += ' ';
+        append += ' ';
         i += 1;
-        wa.post_to_forum(topicid, text, i);
-        time.sleep(1);
+        wa.post_to_chat(chatid, piperead()+append, i);
+        time.sleep(15);
 
 if multi:
     multithread();

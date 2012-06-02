@@ -15,38 +15,38 @@ user = wa.config.default_login;
 passwd = wa.config.default_password;
 
 for opt, arg in goptres[0]:
-	if opt in ('-u', ):
-		user = arg;
-	elif opt in ('-p', ):
-		passwd = arg;
+    if opt in ('-u', ):
+        user = arg;
+    elif opt in ('-p', ):
+        passwd = arg;
 
 try:
-	wa.auth(user, passwd);
-	sys.stderr.write('Auth ok\n');
+    wa.auth(user, passwd);
+    sys.stderr.write('Auth ok\n');
 except WaperAgentCannotAuth:
-	sys.stderr.write('Cannot auth\n');
-	sys.exit(1);
+    sys.stderr.write('Cannot auth\n');
+    sys.exit(1);
 
 class Notifier:
-	def __init__(self):
-		self.data = [];
-	def add(self, newitem):
-		self.data += [newitem];
-	def getstring(self):
-		return ' и '.join(self.data);
+    def __init__(self):
+        self.data = [];
+    def add(self, newitem):
+        self.data += [newitem];
+    def getstring(self):
+        return ' и '.join(self.data);
 
 def __check(tmp, regex, notifierObject):
-	_regex = re.compile(regex);
-	res = _regex.findall(tmp);
-	if len(res)==1:
-		notifierObject.add(res[0]);
-		return 1;
-	else: return 0;
+    _regex = re.compile(regex);
+    res = _regex.findall(tmp);
+    if len(res)==1:
+        notifierObject.add(res[0]);
+        return 1;
+    else: return 0;
 
 
 def _check(tmp, notifierObject):
-	if __check(tmp, r'[0-9]+ ответ[а-я]*', notifierObject) or __check(tmp, r'[0-9]+ сообщени[а-я]*', notifierObject): return 1;
-	else: return 0;
+    if __check(tmp, r'[0-9]+ ответ[а-я]*', notifierObject) or __check(tmp, r'[0-9]+ сообщени[а-я]*', notifierObject): return 1;
+    else: return 0;
 
 notifierObject = Notifier();
 tmp = wa.get('http://waper.ru/office/');

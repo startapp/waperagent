@@ -10,22 +10,22 @@ user = '';
 passwd = '';
 
 for opt, arg in goptres[0]:
-	if opt in ('-u', ):
-		user = arg;
-	elif opt in ('-p', ):
-		passwd = arg;
+    if opt in ('-u', ):
+        user = arg;
+    elif opt in ('-p', ):
+        passwd = arg;
 
 wa = WaperAgent();
 wa.init();
 try:
-	wa.auth(user, passwd);
-	sys.stderr.write('Auth ok\n');
+    wa.auth(user, passwd);
+    sys.stderr.write('Auth ok\n');
 except WaperAgentCannotAuth:
-	sys.stderr.write('Cannot auth\n');
-	sys.exit(1);
+    sys.stderr.write('Cannot auth\n');
+    sys.exit(1);
 
 while 1:
-	wa.get('http://waper.ru/office/');
-	time.sleep(15*60);
-	wa.get('http://waper.ru/forum/');
-	time.sleep(15*60);
+    wa.get('http://waper.ru/office/');
+    time.sleep(15*60);
+    wa.get('http://waper.ru/forum/');
+    time.sleep(15*60);

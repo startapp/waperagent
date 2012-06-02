@@ -10,11 +10,11 @@ conffile = '~/waperagent_conf.py';
 if len(sys.argv)>1: conffile = sys.argv[1];
 
 if not os.path.exists(os.path.basename('~/waperagent_conf.py')):
-	if os.path.exists(os.path.basename('/etc/waperagent_conf.py')):
-		os.popen('cp /etc/waperagent_conf.py ~/waperagent_conf.py');
-	else:
-		sys.stderr.write('Config file not found. /etc/waperagent_conf.py or ~/waperagent_conf.py');
-		sys.exit(1);
+    if os.path.exists(os.path.basename('/etc/waperagent_conf.py')):
+        os.popen('cp /etc/waperagent_conf.py ~/waperagent_conf.py');
+    else:
+        sys.stderr.write('Config file not found. /etc/waperagent_conf.py or ~/waperagent_conf.py');
+        sys.exit(1);
 
 if os.path.exists('./waperagent_conf.py'): conffile = './waperagent_conf.py'
 
@@ -22,82 +22,82 @@ sys.path += [os.path.dirname(conffile), './', os.path.expanduser('~/'), '/etc'];
 
 conf = __import__('waperagent_conf');
 items = [
-	'default_login',
-	'default_password',
-	'notifies_cmd',
-	'graphic_viewer_cmd',
-	'notifies_browser_open',
-	'refresh_time',
-	'exclude_topics'
+    'default_login',
+    'default_password',
+    'notifies_cmd',
+    'graphic_viewer_cmd',
+    'notifies_browser_open',
+    'refresh_time',
+    'exclude_topics'
 ];
 titles = [
-	'Логин',
-	'Пароль',
-	'Команда нотификации (неисп.)',
-	'Графический вьювер',
-	'Команда открытия браузера',
-	'Время обновления (сек.)',
-	'Исключить темы (для nwru-answer-on-all-topics)'
+    'Логин',
+    'Пароль',
+    'Команда нотификации (неисп.)',
+    'Графический вьювер',
+    'Команда открытия браузера',
+    'Время обновления (сек.)',
+    'Исключить темы (для nwru-answer-on-all-topics)'
 ];
 
 
 def _save():
-	global conf, items, conffile;
-	f = open(os.path.expanduser(conffile), 'r');
-	cont = f.read();
-	f.close();
-	r = re.compile('def .*', re.DOTALL);
-	nonstatic = r.findall(cont)[0];
-	f = open(os.path.expanduser(conffile), 'w');
-	f.write('#coding=utf-8\n');
-	for i in items:
-		c = conf.__getattribute__(i);
-		f.write('\n'+i+' = '+repr(c));
-	f.write('\n\n'+nonstatic);
+    global conf, items, conffile;
+    f = open(os.path.expanduser(conffile), 'r');
+    cont = f.read();
+    f.close();
+    r = re.compile('def .*', re.DOTALL);
+    nonstatic = r.findall(cont)[0];
+    f = open(os.path.expanduser(conffile), 'w');
+    f.write('#coding=utf-8\n');
+    for i in items:
+        c = conf.__getattribute__(i);
+        f.write('\n'+i+' = '+repr(c));
+    f.write('\n\n'+nonstatic);
 
 
 class ConfigEditor:
-	def __init__(self):
-		global items, titles;
-		self.window = gtk.Window(gtk.WINDOW_TOPLEVEL);
-		self.window.set_title('Нстройки WaperAgent');
-		self.window.connect('delete_event', self.delete_event);
-		self.window.connect('destroy', self.destroy);
-		self.vbox = gtk.VBox(True, 0);
-		self.window.add(self.vbox);
-		self.fields = {};
-		self.hboxes = {};
-		for i in xrange(len(items)):
-			self.add_field(items[i], titles[i]);
-		self.save_button = gtk.Button('Сохранить', gtk.STOCK_APPLY);
-		self.save_button.connect("clicked", self.save);
-		self.vbox.pack_start(self.save_button, True, True, 0);
-		self.window.show_all();
-		gtk.main();
-	def add_field(self, name, title):
-		global conf;
-		self.fields[name] = gtk.Entry();
-		self.fields[name].set_max_length(2048);
-		self.fields[name].set_text(conf.__getattribute__(name));
-		self.hboxes[name] = gtk.HBox(True, 0);
-		label = gtk.Label(title+':');
-		self.hboxes[name].pack_start(label, True, True, 0);
-		self.hboxes[name].pack_end(self.fields[name], True, True, 0);
-		self.vbox.pack_start(self.hboxes[name], True, True, 0);
-		self.fields[name].show();
-	def destroy(self, widget,data=None):
-		gtk.main_quit();
-	def delete_event(self, widget, event, data=None):
-		return False;
-	def save(self, widget, data=None):
-		global items;
-		for i in items:
-			c = conf.__setattr__(i, self.fields[i].get_text());
-		_save();
-		md = gtk.MessageDialog();
-		md.props.text = 'Настройки сохранены';
-		md.props.secondary_text = 'Пожалуйста, перезапустите все приложения, которые используют waperagent.';
-		md.show();
+    def __init__(self):
+        global items, titles;
+        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL);
+        self.window.set_title('Нстройки WaperAgent');
+        self.window.connect('delete_event', self.delete_event);
+        self.window.connect('destroy', self.destroy);
+        self.vbox = gtk.VBox(True, 0);
+        self.window.add(self.vbox);
+        self.fields = {};
+        self.hboxes = {};
+        for i in xrange(len(items)):
+            self.add_field(items[i], titles[i]);
+        self.save_button = gtk.Button('Сохранить', gtk.STOCK_APPLY);
+        self.save_button.connect("clicked", self.save);
+        self.vbox.pack_start(self.save_button, True, True, 0);
+        self.window.show_all();
+        gtk.main();
+    def add_field(self, name, title):
+        global conf;
+        self.fields[name] = gtk.Entry();
+        self.fields[name].set_max_length(2048);
+        self.fields[name].set_text(conf.__getattribute__(name));
+        self.hboxes[name] = gtk.HBox(True, 0);
+        label = gtk.Label(title+':');
+        self.hboxes[name].pack_start(label, True, True, 0);
+        self.hboxes[name].pack_end(self.fields[name], True, True, 0);
+        self.vbox.pack_start(self.hboxes[name], True, True, 0);
+        self.fields[name].show();
+    def destroy(self, widget,data=None):
+        gtk.main_quit();
+    def delete_event(self, widget, event, data=None):
+        return False;
+    def save(self, widget, data=None):
+        global items;
+        for i in items:
+            c = conf.__setattr__(i, self.fields[i].get_text());
+        _save();
+        md = gtk.MessageDialog();
+        md.props.text = 'Настройки сохранены';
+        md.props.secondary_text = 'Пожалуйста, перезапустите все приложения, которые используют waperagent.';
+        md.show();
 
 print 'Editing file: '+conffile;
 ce = ConfigEditor();

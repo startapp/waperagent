@@ -15,52 +15,52 @@ multi = 0;
 
 
 for opt, arg in goptres[0]:
-	if opt in ('-u', ):
-		user = arg;
-	elif opt in ('-p', ):
-		passwd = arg;
-	elif opt in ('-i', ):
-		chatid = int(arg);
-	elif opt in ('-t', ):
-		text = arg;
-	elif opt in ('-m'):
-		multi = 1;
+    if opt in ('-u', ):
+        user = arg;
+    elif opt in ('-p', ):
+        passwd = arg;
+    elif opt in ('-i', ):
+        chatid = int(arg);
+    elif opt in ('-t', ):
+        text = arg;
+    elif opt in ('-m'):
+        multi = 1;
 
 wa = WaperAgent();
 wa.init();
 try:
-	wa.auth(user, passwd);
-	sys.stderr.write('Auth ok\n');
+    wa.auth(user, passwd);
+    sys.stderr.write('Auth ok\n');
 except WaperAgentCannotAuth:
-	sys.stderr.write('Cannot auth\n');
-	sys.exit(1);
+    sys.stderr.write('Cannot auth\n');
+    sys.exit(1);
 
 i = 0;
 
 def _thread(chatid, text, i):
-	global user, passwd, wa;
-	wa.auth(user, pawwsd);
-	wa.post_to_chat(chatid, text, i);
+    global user, passwd, wa;
+    wa.auth(user, pawwsd);
+    wa.post_to_chat(chatid, text, i);
 
 def multithread():
-	global wa, user, passwd, text;
-	i = 1;
-	while 1:
-		text += ' ';
-		i += 1;
-		thread._start_new_thread(_thread, (chatid, text, i));
-		time.sleep(1);
+    global wa, user, passwd, text;
+    i = 1;
+    while 1:
+        text += ' ';
+        i += 1;
+        thread._start_new_thread(_thread, (chatid, text, i));
+        time.sleep(1);
 
 def normal():
-	global wa, text;
-	i = 1
-	while 1:
-		text += ' ';
-		i += 1;
-		wa.post_to_chat(chatid, text, i);
-		time.sleep(15);
+    global wa, text;
+    i = 1
+    while 1:
+        text += ' ';
+        i += 1;
+        wa.post_to_chat(chatid, text, i);
+        time.sleep(15);
 
 if multi:
-	multithread();
+    multithread();
 else:
-	normal();
+    normal();

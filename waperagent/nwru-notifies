@@ -12,54 +12,54 @@ import gtk
 import threading
 
 def get_cmdline():
-	args = [];
-	for i in sys.argv:
-		args += [i];
-	return ' '.split(args);
+    args = [];
+    for i in sys.argv:
+        args += [i];
+    return ' '.split(args);
 
 class trayicon:
-	def __init__(self):
-		self.started = 0;
-		self.icon = gtk.StatusIcon();
-		self.func = 0;
-		self.newmsg = 0;
-		self.icon.set_from_file('/usr/share/icons/waper-notifies.png');
-		self.icon.set_tooltip("Уведомления WaperAgent");
-		self.icon.connect("activate", self.click);
-		self.icon.connect("popup-menu", self.menu);
-		self.nomsg();
-	def start(self, refresh_timeout=15):
-		self.started = 1;
-		self.func('http://waper.ru/');
-		gtk.timeout_add(refresh_timeout*1000, self.func, ('http://waper.ru/'));
-		gtk.main();
-	def msg(self):
-		self.newmsg = 1;
-		self.icon.set_blinking(1);
-	def nomsg(self):
-		self.newmsg = 0;
-		self.icon.set_blinking(0);
-	def click(self, x):
-		global browser_open;
-		print os.popen(browser_open).read();
-	def exit(self, x):
-		sys.exit(0);
-	def params(self, x):
-		print os.popen('nwru-guiconfig');
-		sys.exit(0);
-	def menu(self, x, y, z):
-		menu = gtk.Menu();
-		iopen = gtk.MenuItem('Открыть браузер');
-		iopen.connect('activate', self.click);
-		menu.append(iopen);
-		iparams = gtk.MenuItem('Параметры');
-		iparams.connect('activate', self.params);
-		menu.append(iparams);
-		iexit = gtk.MenuItem('Выход');
-		iexit.connect('activate', self.exit);
-		menu.append(iexit);
-		menu.show_all();
-		menu.popup(None, None, None, 0, 0);
+    def __init__(self):
+        self.started = 0;
+        self.icon = gtk.StatusIcon();
+        self.func = 0;
+        self.newmsg = 0;
+        self.icon.set_from_file('/usr/share/icons/waper-notifies.png');
+        self.icon.set_tooltip("Уведомления WaperAgent");
+        self.icon.connect("activate", self.click);
+        self.icon.connect("popup-menu", self.menu);
+        self.nomsg();
+    def start(self, refresh_timeout=15):
+        self.started = 1;
+        self.func('http://waper.ru/');
+        gtk.timeout_add(refresh_timeout*1000, self.func, ('http://waper.ru/'));
+        gtk.main();
+    def msg(self):
+        self.newmsg = 1;
+        self.icon.set_blinking(1);
+    def nomsg(self):
+        self.newmsg = 0;
+        self.icon.set_blinking(0);
+    def click(self, x):
+        global browser_open;
+        print os.popen(browser_open).read();
+    def exit(self, x):
+        sys.exit(0);
+    def params(self, x):
+        print os.popen('nwru-guiconfig');
+        sys.exit(0);
+    def menu(self, x, y, z):
+        menu = gtk.Menu();
+        iopen = gtk.MenuItem('Открыть браузер');
+        iopen.connect('activate', self.click);
+        menu.append(iopen);
+        iparams = gtk.MenuItem('Параметры');
+        iparams.connect('activate', self.params);
+        menu.append(iparams);
+        iexit = gtk.MenuItem('Выход');
+        iexit.connect('activate', self.exit);
+        menu.append(iexit);
+        menu.show_all();
+        menu.popup(None, None, None, 0, 0);
 
 wa = WaperAgent();
 wa.init();
@@ -73,56 +73,56 @@ browser_open = wa.config.notifies_browser_open;
 
 
 for opt, arg in goptres[0]:
-	if opt in ('-u', ):
-		user = arg;
-	elif opt in ('-p', ):
-		passwd = arg;
-	elif opt in ('-e', ):
-		cmd = arg;
-	elif opt in ('-r', ):
-		refrtime = int(arg);
-	elif opt in ('-b', ):
-		browser_open = arg;
+    if opt in ('-u', ):
+        user = arg;
+    elif opt in ('-p', ):
+        passwd = arg;
+    elif opt in ('-e', ):
+        cmd = arg;
+    elif opt in ('-r', ):
+        refrtime = int(arg);
+    elif opt in ('-b', ):
+        browser_open = arg;
 
 ti = trayicon();
 
 try:
-	wa.auth(user, passwd);
-	sys.stderr.write('Auth ok\n');
+    wa.auth(user, passwd);
+    sys.stderr.write('Auth ok\n');
 except WaperAgentCannotAuth:
-	sys.stderr.write('Cannot auth\n');
-	sys.exit(1);
+    sys.stderr.write('Cannot auth\n');
+    sys.exit(1);
 
 class Notifier:
-	def __init__(self):
-		self.data = [];
-	def add(self, newitem):
-		self.data += [newitem];
-	def getstring(self):
-		return ' и '.join(self.data);
+    def __init__(self):
+        self.data = [];
+    def add(self, newitem):
+        self.data += [newitem];
+    def getstring(self):
+        return ' и '.join(self.data);
 
 def __check(tmp, regex, notifierObject):
-	_regex = re.compile(regex);
-	res = _regex.findall(tmp);
-	if len(res)==1:
-		notifierObject.add(res[0]);
-		return 1;
-	else: return 0;
+    _regex = re.compile(regex);
+    res = _regex.findall(tmp);
+    if len(res)==1:
+        notifierObject.add(res[0]);
+        return 1;
+    else: return 0;
 
 
 def _check(tmp, notifierObject):
-	if __check(tmp, r'[0-9]+ ответ[а-я]*', notifierObject) or __check(tmp, r'[0-9]+ сообщени[а-я]*', notifierObject): return 1;
-	else: return 0;
+    if __check(tmp, r'[0-9]+ ответ[а-я]*', notifierObject) or __check(tmp, r'[0-9]+ сообщени[а-я]*', notifierObject): return 1;
+    else: return 0;
 
 def check(url):
-	global ti, wa, cmd, user;
-	notifierObject = Notifier();
-	tmp = wa.get('http://waper.ru/office/');
-	if _check(tmp, notifierObject):
-		ti.msg();
-		os.popen(cmd % (notifierObject.getstring(), user) ).read();
-	else: ti.nomsg();
-	return 1;
+    global ti, wa, cmd, user;
+    notifierObject = Notifier();
+    tmp = wa.get('http://waper.ru/office/');
+    if _check(tmp, notifierObject):
+        ti.msg();
+        os.popen(cmd % (notifierObject.getstring(), user) ).read();
+    else: ti.nomsg();
+    return 1;
 
 ti.func = check;
 ti.start(refresh_timeout=refrtime);
