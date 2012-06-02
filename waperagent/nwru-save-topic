@@ -4,7 +4,6 @@ import getopt
 import sys
 from waperagent import *
 import time
-import savetopic_generators as g
 
 wa = WaperAgent();
 wa.init();
@@ -35,7 +34,7 @@ except WaperAgentCannotAuth:
 info = wa.topic_info(topic)
 psts = wa.read_topic(topic);
 
-generator = getattr(g, generator)
+generator = __import__('savetopic_generator_%s'%generator)
 gen = generator.Generator(groupname=info[0], forumname=info[1], topicname=info[2], author=info[3], pages=info[4])
 if gen.MODE == 'ONECALL':
     print gen.generate(psts)

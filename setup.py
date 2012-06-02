@@ -20,7 +20,7 @@ setup(
     version = popen('./version.sh').read(),
     packages = ['waperagent'],
 	scripts = glob('waperagent/nwru-*'),
-    py_modules = ['waperagent'],
+    py_modules = ['waperagent/waperagent']+glob('waperagent/savetopic_generator/*'),
 	author = "startapp",
 	author_email = "startapp38@gmail.com",
     cmdclass = {'install': install},
