@@ -34,14 +34,16 @@ except WaperAgentCannotAuth:
 info = wa.topic_info(topic)
 psts = wa.read_topic(topic);
 
-generator = __import__('savetopic_generator_%s'%generator)
+_generator = __import__('waperagent.savetopic_generator_%s'%generator)
+generator = getattr(_generator, 'savetopic_generator_%s'%generator)
+print dir(generator)
 gen = generator.Generator(groupname=info[0], forumname=info[1], topicname=info[2], author=info[3], pages=info[4])
 if gen.MODE == 'ONECALL':
     print gen.generate(psts)
 elif gen.MODE == 'MANYCALLS':
     print gen.header()
     for p in psts:
-        print gen.process_post(p)
+        print gen.process_post(p).encode('utf-8')
     print gen.footer()
 else:
     raise ValueError, 'MODE must be \'ONECALL\' or \'MANYCALLS\', not %s'%repr(gen.mode)
