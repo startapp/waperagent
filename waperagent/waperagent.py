@@ -7,6 +7,7 @@ import sys
 import os
 import re
 
+
 class ReceivedMessage:
     def __init__(self, time, from_id, from_login, text):
         self.time = time;
@@ -198,7 +199,7 @@ class WaperAgent(Curl):
         if num != 0: print 'Post #'+str(num)+' sent';
 
     def read_topic(self, id):
-        res = self.get_full('http://waper.ru/forum/topic/%s'%id, 0);
+        res = self.get_full('http://waper.ru/forum/topic/%s'%id, 0)
         regex = re.compile(r'<div class="r.h?"?">.*?<a name="(.*?)">.*?<a href="/user/.*?">(.*?)</a>.*?<span class=".*?">(\d{2}.\d{2}.\d{4} \d{2}:\d{2})</span>.*?<div>(.*?)</div>', re.DOTALL);
         posts = regex.findall(res);
         return posts;
