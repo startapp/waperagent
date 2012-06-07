@@ -9,6 +9,7 @@ def process_bbcode(str):
     str = re.compile('<i>(.*?)</i>', re.DOTALL).sub(r'/\1/', str)
     str = re.compile('<s>(.*?)</s>', re.DOTALL).sub(r'-\1-', str)
     str = re.compile('<img.*?alt="(.*?)".*?/>', re.DOTALL).sub(r'\1', str)
+    str = re.compile('<br/>', re.DOTALL).sub(r'', str)
     str = h.unescape(str)
     return str
 
