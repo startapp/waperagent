@@ -71,15 +71,13 @@ class WaperAgent(Curl):
     def post_to_forum(self, topicid, text, num=0):
         try: res = self.post('http://waper.ru/office/group/forum/write/?id='+str(topicid), {'_h': 'ю', 'text': text, 'send': 'Отправить'});
         except: return
-        if res.find('Ошибка')!=-1:
-            sys.stderr.write('ERROR!\n\n\n'+str(res));
+        if (res.find('Ошибка') !=-1) or (res.find('ошибка') !=-1) or (res.find('ОШИБКА') !=-1) or (res.find('не участвуете') !=-1):
             raise WaperAgentCannotSendPost;
         if num != 0: print 'Post #'+str(num)+' sent';
     def answer_in_forum(self, pid, text, num=0):
         res = self.get('http://waper.ru/r/p.r/?pid='+str(pid));
         #print res;
-        if res.find('Ошибка')!=-1:
-            sys.stderr.write('ERROR!\n\n\n'+str(res));
+        if (res.find('Ошибка') !=-1) or (res.find('ошибка') !=-1) or (res.find('ОШИБКА') !=-1) or (res.find('не участвуете') !=-1):
             raise WaperAgentCannotSendPost;
         regex = re.compile(r'\/office\/group\/forum\/write\/\?id=([0-9]+)\&amp\;uid=([0-9]+)\&amp\;pid\=([0-9]+)');
         target=regex.findall(res)[0];

@@ -31,4 +31,7 @@ except WaperAgentCannotAuth:
     sys.stderr.write('Cannot auth\n');
     sys.exit(1);
 
-wa.answer_in_forum(pid, text);
+try:
+    wa.answer_in_forum(pid, text);
+except:
+    sys.stderr.write("Error.")

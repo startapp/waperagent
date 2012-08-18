@@ -31,5 +31,8 @@ except WaperAgentCannotAuth:
     sys.stderr.write('Cannot auth\n');
     sys.exit(1);
 
-wa.post_to_forum(topicid, text);
-print'Post sended ok;/';
+try:
+    wa.post_to_forum(topicid, text);
+except:
+    sys.stderr.write("Error.\n");
+print'Post sended ok.';
