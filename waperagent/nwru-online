@@ -26,6 +26,6 @@ except WaperAgentCannotAuth:
 
 while 1:
     wa.get('http://waper.ru/office/');
-    time.sleep(15*60);
+    time.sleep(3*60);
     wa.get('http://waper.ru/forum/');
-    time.sleep(15*60);
+    time.sleep(3*60);
