@@ -33,6 +33,6 @@ except WaperAgentCannotAuth:
 
 try:
     wa.post_to_forum(topicid, text);
+    print'Post sended ok.';
 except:
     sys.stderr.write("Error.\n");
-print'Post sended ok.';

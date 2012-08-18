@@ -33,5 +33,6 @@ except WaperAgentCannotAuth:
 
 try:
     wa.answer_in_forum(pid, text);
+    print "Post sended ok;/"
 except:
     sys.stderr.write("Error.")
