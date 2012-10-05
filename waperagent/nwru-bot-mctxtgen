@@ -11,6 +11,7 @@ goptres = getopt.getopt(sys.argv[1:], 'u:p:f:');
 user = '';
 passwd = '';
 mfiles = '';
+forum = '';
 
 for opt, arg in goptres[0]:
     if opt in ('-u', ):
@@ -19,6 +20,8 @@ for opt, arg in goptres[0]:
         passwd = arg;
     elif opt in ('-f', ):
         mfile = arg;
+    elif opt in ('-r', ):
+        forum = arg;
 
 cmd = 'mctg_generator %s'%mfile
 
@@ -32,6 +35,12 @@ def proccess_msg(pid, author, text):
     f.close()
     return txt
 
+def random_post():
+    global forum, wa
+    ids = wa.get_all_topic_ids(forum)
+    topicid = ids[random.randint(0, len(ids)-1)]
+    wa.post_to_forum(0, '', '')
+
 try:
     wa.auth(user, passwd);
     sys.stderr.write('Auth ok\n');
@@ -40,6 +49,8 @@ except WaperAgentCannotAuth:
     sys.exit(1);
 
 while 1:
+    if random.randint(0,5) == 3:
+        random_post()
     post = None;
     try: post = wa.getnewmsg();
     except: pass
