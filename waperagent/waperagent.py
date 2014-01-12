@@ -60,11 +60,12 @@ class WaperAgent(Curl):
         if captcha=='':
             res = self.post("http://waper.ru/login/", {'u_login': login, 'u_passwd': passwd});
         else:
-            res = self.post("http://waper.ru/login/", {'u_login': login, 'u_passwd': passwd, 'u_code': captcha});            
+            res = self.post("http://waper.ru/login/", {'u_login': login, 'u_passwd': passwd, 'u_code': captcha});
+        #print res
         if res.find('ошибка')!=1 and res.find('ошибки')!=-1:
             #sys.stderr.write('ERROR!\n\n\n'+str(res));
             return self.auth(login, passwd, self.ask_captcha(res));
-        rr = re.compile(r'<a href="/user/([0-9]+)">Моя анкета</a>', re.DOTALL);
+        rr = re.compile(r'<a href="/user/([0-9]+).*?">Моя анкета</a>', re.DOTALL);
         fnd = rr.findall(res);
         #print fnd;
         self.uid = fnd[0];
