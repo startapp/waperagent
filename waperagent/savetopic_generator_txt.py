@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re, htmlentitydefs 
-import HTMLParser
 
 def process_bbcode(str):
     h = HTMLParser.HTMLParser()

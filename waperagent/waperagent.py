@@ -70,8 +70,7 @@ class WaperAgent(Curl):
         #print fnd;
         self.uid = fnd[0];
     def post_to_forum(self, topicid, text, num=0):
-        try: res = self.post('http://waper.ru/office/group/forum/write/?id='+str(topicid), {'_h': 'ю', 'text': text, 'send': 'Отправить'});
-        except: return
+        res = self.post('http://waper.ru/office/group/forum/write/?id='+str(topicid), {'_h': 'ю', 'text': text, 'send': 'Отправить'});
         if (res.find('Ошибка') !=-1) or (res.find('ошибка') !=-1) or (res.find('ОШИБКА') !=-1) or (res.find('не участвуете') !=-1):
             raise WaperAgentCannotSendPost;
         if num != 0: print 'Post #'+str(num)+' sent';
